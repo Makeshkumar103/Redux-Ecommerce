@@ -1,0 +1,132 @@
+[
+  {
+    "name": "OPPO F21S Pro 5G",
+    "price": 245.7,
+    "description": "OPPO F21S Pro 5G is a powerful mid-range smartphone with 5G connectivity, 64MP triple camera, and a 90Hz AMOLED display.",
+    "ratings": 4.5,
+    "images": [
+      { "image": "/images/product/1.jpg" },
+      { "image": "/images/product/2.jpg" }
+    ],
+    "category": "Mobile Phones",
+    "seller": "Amazon",
+    "stock": 5
+  },
+  {
+    "name": "Samsung Galaxy S24 Ultra",
+    "price": 899.99,
+    "description": "Samsung Galaxy S24 Ultra features a powerful Snapdragon 8 Gen 3 processor, 200MP camera, and built-in S Pen.",
+    "ratings": 4.7,
+    "images": [
+      { "image": "/images/product/3.jpg" },
+      { "image": "/images/product/4.jpg" }
+    ],
+    "category": "Mobile Phones",
+    "seller": "Flipkart",
+    "stock": 12
+  },
+  {
+    "name": "Apple MacBook Air M3",
+    "price": 1099.0,
+    "description": "Apple MacBook Air M3 features the powerful M3 chip, 15.3-inch Liquid Retina display, and all-day battery life.",
+    "ratings": 4.8,
+    "images": [
+      { "image": "/images/product/5.jpg" },
+      { "image": "/images/product/6.jpg" }
+    ],
+    "category": "Laptops",
+    "seller": "Apple Store",
+    "stock": 8
+  },
+  {
+    "name": "Sony WH-1000XM5 Headphones",
+    "price": 349.99,
+    "description": "Industry-leading noise cancellation with premium sound quality, 30-hour battery life, and comfortable lightweight design.",
+    "ratings": 4.6,
+    "images": [
+      { "image": "/images/product/7.jpg" },
+      { "image": "/images/product/8.jpg" }
+    ],
+    "category": "Electronics",
+    "seller": "Amazon",
+    "stock": 20
+  },
+  {
+    "name": "Nike Air Max 270",
+    "price": 149.99,
+    "description": "Nike Air Max 270 features the largest Air unit in the heel for maximum cushioning and a stylish modern design.",
+    "ratings": 4.3,
+    "images": [
+      { "image": "/images/product/9.jpg" },
+      { "image": "/images/product/10.jpg" }
+    ],
+    "category": "Footwear",
+    "seller": "Nike Official",
+    "stock": 25
+  },
+  {
+    "name": "Logitech MX Master 3S",
+    "price": 99.99,
+    "description": "Logitech MX Master 3S wireless mouse with 8K DPI tracking, quiet clicks, and ergonomic design for productivity.",
+    "ratings": 4.7,
+    "images": [
+      { "image": "/images/product/11.jpg" },
+      { "image": "/images/product/12.jpg" }
+    ],
+    "category": "Accessories",
+    "seller": "Logitech Store",
+    "stock": 30
+  },
+  {
+    "name": "LG 65-inch OLED TV C3",
+    "price": 1799.99,
+    "description": "LG OLED C3 with self-lit pixels, Dolby Vision, Dolby Atmos, and a sleek design for a cinematic experience.",
+    "ratings": 4.5,
+    "images": [
+      { "image": "/images/product/13.jpg" },
+      { "image": "/images/product/14.jpg" }
+    ],
+    "category": "Televisions",
+    "seller": "LG Official",
+    "stock": 7
+  },
+  {
+    "name": "Adidas Ultraboost Light",
+    "price": 189.99,
+    "description": "Adidas Ultraboost Light running shoes with Light BOOST midsole, Continental rubber outsole, and Primeknit upper.",
+    "ratings": 4.4,
+    "images": [
+      { "image": "/images/product/15.jpg" },
+      { "image": "/images/product/16.jpg" }
+    ],
+    "category": "Footwear",
+    "seller": "Adidas Official",
+    "stock": 18
+  },
+  {
+    "name": "Canon EOS R6 Mark II",
+    "price": 2499.0,
+    "description": "Canon EOS R6 Mark II mirrorless camera with 24.2MP sensor, 4K 60fps video, and advanced autofocus system.",
+    "ratings": 4.8,
+    "images": [
+      { "image": "/images/product/17.jpg" },
+      { "image": "/images/product/18.jpg" }
+    ],
+    "category": "Cameras",
+    "seller": "Canon Store",
+    "stock": 3
+  },
+  {
+    "name": "Dyson V15 Detect Vacuum",
+    "price": 749.99,
+    "description": "Dyson V15 Detect cordless vacuum with laser illumination, piezo sensor, and up to 60 minutes of fade-free suction.",
+    "ratings": 4.6,
+    "images": [
+      { "image": "/images/product/19.jpg" },
+      { "image": "/images/product/20.jpg" }
+    ],
+    "category": "Home Appliances",
+    "seller": "Dyson Official",
+    "stock": 10
+  }
+]
