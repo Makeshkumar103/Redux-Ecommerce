@@ -9,6 +9,9 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import NotFound from './pages/NotFound';
+import UnauthPage from './pages/UnauthPage';
+
 import PrivateRoute from './components/PrivateRoute';
 
 import { ToastContainer } from 'react-toastify';
@@ -50,6 +53,8 @@ function App() {
               <Footer />
             </PrivateRoute>
           } />
+          <Route path='*' element={<NotFound />} />
+          <Route path='/unauthpage' element={<UnauthPage />} />
         </Routes>
       </Router>
     </div>
