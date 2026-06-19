@@ -9,39 +9,53 @@ graph TB
         B --> C[App.js]
         C --> D[Header.js]
         C --> E[Footer.js]
-        C --> F[Home.js]
-        C --> G[ProductDetail.js]
-        C --> H[Cart.js]
-        D --> I[Search.js]
-        F --> J[ProductCard.js]
+        C --> F[PrivateRoute.js]
+        F --> G[Home.js]
+        F --> H[ProductDetail.js]
+        F --> I[Cart.js]
+        C --> J[Login.js]
+        C --> K[Register.js]
+        D --> L[Search.js]
+        G --> M[ProductCard.js]
         subgraph Redux Store
-            K[store.js] --> L[cartSlice.js]
-            K --> M[productSlice.js]
+            N[store.js] --> O[authSlice.js]
+            N --> P[cartSlice.js]
+            N --> Q[productSlice.js]
         end
-        F --> M
-        G --> M
-        H --> L
+        G --> Q
+        H --> Q
+        I --> P
+        J --> O
+        K --> O
+        D --> O
     end
 
     subgraph Backend ["Backend - Express 5 (port 8000)"]
-        N[app.js] --> O[routes/product.js]
-        N --> P[routes/order.js]
-        O --> Q[controllers/productControllers.js]
-        P --> R[controllers/orderControllers.js]
-        Q --> S[models/productModel.js]
-        R --> T[models/orderModel.js]
-        R --> S
-        N --> U[config/connectDatabase.js]
+        R[app.js] --> S[routes/product.js]
+        R --> T[routes/order.js]
+        R --> U[routes/auth.js]
+        S --> V[controllers/productControllers.js]
+        T --> W[controllers/orderControllers.js]
+        U --> X[controllers/authController.js]
+        V --> Y[models/productModel.js]
+        W --> Z[models/orderModel.js]
+        W --> Y
+        X --> AA[models/userModel.js]
+        X --> AB[middleware/auth.js]
+        AB --> AA
+        R --> AC[config/connectDatabase.js]
+        R --> AD[middleware/auth.js]
     end
 
     subgraph Database ["MongoDB"]
-        V[(Redux-Ecommerce)]
+        AE[(Redux-Ecommerce)]
     end
 
     Frontend -- HTTP fetch --> Backend
-    U --> V
-    S --> V
-    T --> V
+    AC --> AE
+    Y --> AE
+    Z --> AE
+    AA --> AE
 ```
 
 ## Data Flow
@@ -54,9 +68,18 @@ sequenceDiagram
     participant API as Express API
     participant DB as MongoDB
 
+    User->>Browser: Open /login
+    Browser->>API: POST /api/v1/auth/login (email, password)
+    API->>DB: User.findOne({email})
+    DB-->>API: user (with hashed password)
+    API->>API: bcrypt.compare + JWT.sign
+    API-->>Browser: { token, user }
+    Browser->>Redux: dispatch(loginUser.fulfilled)
+    Redux-->>Browser: store token in localStorage + state
+
     User->>Browser: Open / (Home)
-    Browser->>Redux: dispatch(fetchProducts)
-    Redux->>API: GET /api/v1/products
+    Browser->>API: GET /api/v1/products (JWT in header)
+    API->>API: JWT.verify (protect middleware)
     API->>DB: Product.find({})
     DB-->>API: products[]
     API-->>Redux: JSON { products }
@@ -77,7 +100,7 @@ sequenceDiagram
     User->>Browser: Place Order
     Browser->>API: POST /api/v1/order (cartItems from Redux)
     API->>DB: Order.create({cartItems, amount, status})
-    API->>DB: Product.findByIdAndUpdate(stock - qty)
+    API->>DB: Product.findById(id) + product.save() (stock -= qty)
     DB-->>API: order
     API-->>Browser: JSON { success: true }
     Browser->>Redux: dispatch(clearCart())
@@ -104,38 +127,53 @@ frontend/src/index.js
   ├── ./index.css
   ├── ./store/store              → Redux Provider wrapper
   │     ├── @reduxjs/toolkit (configureStore)
+  │     ├── ./authSlice          → authSlice.reducer
   │     ├── ./cartSlice          → cartSlice.reducer
   │     └── ./productSlice       → productSlice.reducer
   └── ./App
 
 frontend/src/App.js
   ├── ./App.css                          (styling)
-  ├── ./components/Header                (nav bar, reads Redux cart)
+  ├── ./components/PrivateRoute          (route guard — checks JWT token)
+  │     ├── react-redux (useSelector)
+  │     └── react-router-dom (Navigate)
+  ├── ./components/Header                (nav bar, reads Redux cart + logout)
   │     ├── ./Search                     (keyword input)
   │     │     ├── react (useState)
   │     │     └── react-router-dom (useNavigate)
-  │     ├── react-redux (useSelector)
+  │     ├── react-redux (useSelector, useDispatch)
+  │     ├── ../store/authSlice (logout)
   │     └── react-router-dom (Link)
   ├── ./components/Footer                (static footer)
-  ├── ./pages/Home                       (product listing from Redux)
+  ├── ./pages/Home                       (product listing from Redux, requires auth)
   │     ├── react (useEffect)
   │     ├── react-router-dom (useSearchParams)
   │     ├── react-redux (useDispatch, useSelector)
   │     ├── ../store/productSlice (fetchProducts async thunk)
   │     └── ../components/ProductCard    (card UI)
   │           └── react-router-dom (Link)
-  ├── ./pages/ProductDetail              (product details + add to cart)
+  ├── ./pages/ProductDetail              (product details + add to cart, requires auth)
   │     ├── react (useEffect, useState)
   │     ├── react-router-dom (useParams)
   │     ├── react-redux (useDispatch, useSelector)
   │     ├── ../store/productSlice (fetchProductDetails async thunk)
   │     ├── ../store/cartSlice (addToCart action)
   │     └── react-toastify (toast)
-  ├── ./pages/Cart                       (cart management + order)
+  ├── ./pages/Cart                       (cart management + order, requires auth)
   │     ├── react (useState)
   │     ├── react-redux (useDispatch, useSelector)
   │     ├── ../store/cartSlice (increaseQty, decreaseQty, removeFromCart, clearCart)
   │     └── react-router-dom (Link)
+  ├── ./pages/Login                      (login form)
+  │     ├── react (useEffect, useState)
+  │     ├── react-redux (useDispatch, useSelector)
+  │     ├── ../store/authSlice (loginUser async thunk, clearError)
+  │     └── react-router-dom (useNavigate)
+  ├── ./pages/Register                   (registration form)
+  │     ├── react (useEffect, useState)
+  │     ├── react-redux (useDispatch, useSelector)
+  │     ├── ../store/authSlice (registerUser async thunk, clearError)
+  │     └── react-router-dom (useNavigate)
   ├── react-router-dom (BrowserRouter, Routes, Route)
   └── react-toastify (ToastContainer, CSS)
 
@@ -143,33 +181,52 @@ backend/app.js (entry point)
   ├── dotenv         →  backend/.env
   ├── express
   ├── cors
+  ├── express.json()
+  ├── express.static(frontend/public)
   ├── ./config/connectDatabase
   │     └── mongoose  →  backend/.env (DB_URL)
   ├── ./routes/product
   │     └── ../controllers/productControllers
   │           └── ../models/productModel → mongoose
-  └── ./routes/order
-        └── ../controllers/orderControllers
-              ├── ../models/orderModel  → mongoose
-              └── ../models/productModel → mongoose
+  ├── ./routes/order
+  │     └── ../controllers/orderControllers
+  │           ├── ../models/orderModel  → mongoose
+  │           └── ../models/productModel → mongoose
+  └── ./routes/auth
+        └── ../controllers/authController
+              ├── ../models/userModel → mongoose (bcrypt)
+              └── ../middleware/auth
+                    └── jsonwebtoken (JWT.verify)
+
 ```
 
 ## Route Map
 
 | Method | URL | Component / Controller | Description |
 |--------|-----|----------------------|-------------|
-| `GET` | `/` | `Home.js` | Product listing page (Redux) |
-| `GET` | `/search?keyword=...` | `Home.js` | Filtered product listing (Redux) |
-| `GET` | `/product/:id` | `ProductDetail.js` | Single product details (Redux) |
-| `GET` | `/cart` | `Cart.js` | Shopping cart (Redux) |
+| `GET` | `/` | `Home.js` (via PrivateRoute) | Product listing page (Redux) |
+| `GET` | `/search?keyword=...` | `Home.js` (via PrivateRoute) | Filtered product listing (Redux) |
+| `GET` | `/product/:id` | `ProductDetail.js` (via PrivateRoute) | Single product details (Redux) |
+| `GET` | `/cart` | `Cart.js` (via PrivateRoute) | Shopping cart (Redux) |
+| `GET` | `/login` | `Login.js` | Login page |
+| `GET` | `/register` | `Register.js` | Register page |
 | `GET` | `/api/v1/products` | `getProducts` | API: all/filtered products |
 | `GET` | `/api/v1/product/:id` | `getSingleProduct` | API: single product |
 | `POST` | `/api/v1/order` | `createOrder` | API: place order |
+| `POST` | `/api/v1/auth/register` | `register` | API: register user |
+| `POST` | `/api/v1/auth/login` | `login` | API: login, returns JWT |
+| `GET` | `/api/v1/auth/profile` | `getProfile` (protect) | API: get user profile |
 
 ## State Management (Redux Toolkit)
 
 ```
 store.js (configureStore)
+  ├── auth: authSlice.reducer
+  │     └── initialState: { token: localStorage.getItem('token'), user: null, status: 'idle', error: null }
+  │     └── async thunks: registerUser, loginUser, fetchProfile
+  │     └── reducers: logout, clearError
+  │     └── consumed by: Login.js, Register.js, Header.js (logout), PrivateRoute.js (token check)
+  │
   ├── cart: cartSlice.reducer
   │     └── initialState: { items: [] }
   │     └── reducers: addToCart, increaseQty, decreaseQty, removeFromCart, clearCart
@@ -196,14 +253,18 @@ graph TB
     App --> Header[Header.js]
     Header --> Search[Search.js]
     App --> Routes
-    Routes --> Home[Home.js /]
+    Routes --> PR[PrivateRoute]
+    PR --> Home[Home.js /]
     Home --> PC[ProductCard.js]
-    Routes --> PD[ProductDetail.js /product/:id]
-    Routes --> Cart[Cart.js /cart]
+    PR --> PD[ProductDetail.js /product/:id]
+    PR --> Cart[Cart.js /cart]
+    Routes --> Login[Login.js /login]
+    Routes --> Register[Register.js /register]
     App --> Footer[Footer.js]
 
     subgraph Redux [Redux Store]
-        Store[store.js] --> CS[cartSlice]
+        Store[store.js] --> AS[authSlice]
+        Store --> CS[cartSlice]
         Store --> PS[productSlice]
     end
 
@@ -211,14 +272,18 @@ graph TB
     PD -.->|useSelector useDispatch| PS
     PD -.->|useDispatch| CS
     Cart -.->|useSelector useDispatch| CS
+    Header -.->|useSelector useDispatch| AS
     Header -.->|useSelector| CS
+    Login -.->|useSelector useDispatch| AS
+    Register -.->|useSelector useDispatch| AS
+    PR -.->|useSelector| AS
 ```
 
 ## Key Configuration
 
 | File | Key Settings |
 |------|-------------|
-| `backend/.env` | PORT=8000, NODE_ENV=Development, DB_URL=mongodb://localhost:27017/Redux-Ecommerce |
+| `backend/.env` | PORT=8000, NODE_ENV=Development, DB_URL=mongodb://localhost:27017/Redux-Ecommerce, JWT_SECRET=your-secret-key |
 | `frontend/.env` | REACT_APP_API_URL=http://localhost:8000/api/v1 |
-| `backend/package.json` | Express 5, Mongoose 9, Cors, Dotenv, Nodemon (dev) |
-| `frontend/package.json` | React 19, React Router DOM 7, Redux Toolkit 2, React Redux 9, React Toastify 11 |
+| `backend/package.json` | Express 5, Mongoose 9, Cors, Dotenv, Bcryptjs 3, JsonWebToken 9, Nodemon (dev) |
+| `frontend/package.json` | React 19, React Router DOM 7, Redux Toolkit 2, React Redux 9, React Toastify 11, Axios |
