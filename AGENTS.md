@@ -22,7 +22,7 @@ cd frontend && npm run build     # production build
 
 ## Architecture facts an agent will miss
 
-- **State is Redux, not React `useState`** — ARCHITECTURE.md is stale; the app uses `@reduxjs/toolkit` with three slices:
+- **State is Redux, not React `useState`** — the app uses `@reduxjs/toolkit` with three slices:
   - `frontend/src/store/authSlice.js` — `registerUser`, `loginUser`, `fetchProfile` (async thunks); `logout`, `clearError` (reducers); state: `{ token, user, status, error }`
   - `frontend/src/store/cartSlice.js` — `addToCart`, `increaseQty`, `decreaseQty`, `removeFromCart`, `clearCart`
   - `frontend/src/store/productSlice.js` — `fetchProducts` (GET /products), `fetchProductDetails` (GET /product/:id) — both async thunks
@@ -40,7 +40,10 @@ cd frontend && npm run build     # production build
   - `/cart` — Cart (requires auth)
   - `/login` — Login page
   - `/register` — Register page
-- **PrivateRoute guard** — `frontend/src/components/PrivateRoute.js` wraps all non-auth routes; redirects to `/login` if no JWT token in Redux store
+  - `*` — NotFound (404 page, no auth)
+  - `/unauthpage` — UnauthPage ("Access Denied", no auth)
+- **PrivateRoute guard** — `frontend/src/components/PrivateRoute.js` wraps `/`, `/search`, `/product/:id`, `/cart`; redirects to `/login` if no JWT token in Redux store
+- **Search component** — `frontend/src/components/Search.js` renders an input + button in the Header; navigates to `/search?keyword=<value>`
 - **Provider wrapping** — `<Provider store={store}>` in `index.js`, not in `App.js`
 
 ## Setup gotchas
@@ -56,5 +59,5 @@ cd frontend && npm run build     # production build
 
 ## References
 
-- `ARCHITECTURE.md` — useful overview but stale on state management (claims `useState`, actually Redux) and DB name (says `mini-ecommerce`, runs as `Redux-Ecommerce`)
+- `ARCHITECTURE.md` — useful overview but stale on DB name (says `mini-ecommerce`, runs as `Redux-Ecommerce`)
 - `backend/seeder.js` — connects directly to MongoDB with `deleteMany` then `insertMany`

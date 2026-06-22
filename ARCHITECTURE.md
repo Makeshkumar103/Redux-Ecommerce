@@ -15,6 +15,8 @@ graph TB
         F --> I[Cart.js]
         C --> J[Login.js]
         C --> K[Register.js]
+        C --> M[NotFound.js]
+        C --> N[UnauthPage.js]
         D --> L[Search.js]
         G --> M[ProductCard.js]
         subgraph Redux Store
@@ -78,8 +80,7 @@ sequenceDiagram
     Redux-->>Browser: store token in localStorage + state
 
     User->>Browser: Open / (Home)
-    Browser->>API: GET /api/v1/products (JWT in header)
-    API->>API: JWT.verify (protect middleware)
+    Browser->>API: GET /api/v1/products
     API->>DB: Product.find({})
     DB-->>API: products[]
     API-->>Redux: JSON { products }
@@ -109,7 +110,7 @@ sequenceDiagram
     User->>Browser: Search keyword
     Browser->>Redux: dispatch(fetchProducts(keyword))
     Redux->>API: GET /api/v1/products?keyword=phone
-    API->>DB: Product.find({name: /phone/i})
+    API->>DB: Product.find({name: {$regex: /phone/i}})
     DB-->>API: filtered products
     API-->>Redux: JSON { products }
     Redux-->>Browser: re-render filtered ProductCards
@@ -174,6 +175,10 @@ frontend/src/App.js
   │     ├── react-redux (useDispatch, useSelector)
   │     ├── ../store/authSlice (registerUser async thunk, clearError)
   │     └── react-router-dom (useNavigate)
+  ├── ./pages/NotFound                   (404 page, no auth)
+  │     └── react-router-dom (Link)
+  ├── ./pages/UnauthPage                 (access denied, no auth)
+  │     └── react-router-dom (Link)
   ├── react-router-dom (BrowserRouter, Routes, Route)
   └── react-toastify (ToastContainer, CSS)
 
@@ -210,6 +215,8 @@ backend/app.js (entry point)
 | `GET` | `/cart` | `Cart.js` (via PrivateRoute) | Shopping cart (Redux) |
 | `GET` | `/login` | `Login.js` | Login page |
 | `GET` | `/register` | `Register.js` | Register page |
+| `GET` | `/*` (catch-all) | `NotFound.js` | 404 page (no auth) |
+| `GET` | `/unauthpage` | `UnauthPage.js` | Access denied page (no auth) |
 | `GET` | `/api/v1/products` | `getProducts` | API: all/filtered products |
 | `GET` | `/api/v1/product/:id` | `getSingleProduct` | API: single product |
 | `POST` | `/api/v1/order` | `createOrder` | API: place order |
@@ -260,6 +267,8 @@ graph TB
     PR --> Cart[Cart.js /cart]
     Routes --> Login[Login.js /login]
     Routes --> Register[Register.js /register]
+    Routes --> NF[NotFound.js /*]
+    Routes --> UA[UnauthPage.js /unauthpage]
     App --> Footer[Footer.js]
 
     subgraph Redux [Redux Store]

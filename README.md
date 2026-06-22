@@ -62,8 +62,10 @@ npm start         # dev server on :3000
 | `/cart` | Cart | Shopping cart + order (requires auth) |
 | `/login` | Login | User login |
 | `/register` | Register | User registration |
+| `*` (catch-all) | NotFound | 404 page (no auth) |
+| `/unauthpage` | UnauthPage | Access denied page (no auth) |
 
-> **Note:** All routes except `/login` and `/register` are wrapped in `<PrivateRoute>` and require a valid JWT token.
+> **Note:** Routes `/`, `/search`, `/product/:id`, and `/cart` are wrapped in `<PrivateRoute>` and require a valid JWT token. Routes `/login`, `/register`, `*`, and `/unauthpage` are publicly accessible.
 
 ## Scripts
 

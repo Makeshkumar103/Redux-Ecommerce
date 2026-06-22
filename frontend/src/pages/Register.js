@@ -9,13 +9,13 @@ function Register() {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token, status, error } = useSelector((state) => state.auth);
+  const { token, user, status, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (token) {
-      navigate('/');
+    if (token && user) {
+      navigate(user.role === 'admin' ? '/admin/newproduct' : '/');
     }
-  }, [token, navigate]);
+  }, [token, user, navigate]);
 
   useEffect(() => {
     return () => {

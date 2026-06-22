@@ -1,7 +1,5 @@
 const productModel = require('../models/productModel');
-// const ProductModel = require('../models/productModel');
 
-// Get Products API - /api/v1/product
 exports.getProducts = async (req, res, next) => {
     const query = req.query.keyword? { name : {
         $regex: req.query.keyword,
@@ -16,9 +14,6 @@ exports.getProducts = async (req, res, next) => {
         message: 'Get products working!'
     })
 }
-
-
-// Get Single Product API - /api/v1/product/:id
 
 exports.getSingleProduct = async (req, res, next) => {
     try {
@@ -35,4 +30,31 @@ exports.getSingleProduct = async (req, res, next) => {
     })
     }
     
+}
+
+exports.createProduct = async (req, res, next) => {
+    try {
+        const { name, price, description, category, seller, stock, imageUrl } = req.body;
+        const product = await productModel.create({
+            name,
+            price,
+            description,
+            ratings: "0",
+            images: [{ image: imageUrl }],
+            category,
+            seller,
+            stock,
+            numOfReviews: "0",
+            createdAt: Date.now()
+        });
+        res.status(201).json({
+            success: true,
+            product
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 }
