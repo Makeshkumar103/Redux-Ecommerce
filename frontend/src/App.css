@@ -344,8 +344,13 @@ footer {
   justify-content: center;
   align-items: center;
   margin-top: 5rem;
-
   font-weight: 700;
+}
+
+.wrapper .card {
+  width: 28rem;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 .wrapper form {
@@ -357,11 +362,37 @@ footer {
   border-color: #fa9c23;
   color: white;
   margin-top: 2.5rem;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+}
+
+.wrapper form .btn:hover {
+  background-color: #e08a0e;
+  border-color: #d4850d;
+  color: white;
+}
+
+.wrapper form .btn:disabled {
+  background-color: #f5b754;
+  border-color: #f5b754;
 }
 
 .wrapper form a {
   font-size: 0.9rem;
   color: grey;
+}
+
+.btn-orange {
+  background-color: #fa9c23;
+  border-color: #fa9c23;
+  color: white;
+  font-weight: 600;
+  padding: 0.6rem 2rem;
+}
+.btn-orange:hover {
+  background-color: #e08a0e;
+  border-color: #d4850d;
+  color: white;
 }
 
 /* Avatar */

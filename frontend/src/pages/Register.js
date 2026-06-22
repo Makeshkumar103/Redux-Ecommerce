@@ -29,29 +29,31 @@ function Register() {
   };
 
   return (
-    <div className="auth-card">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name
-          <input value={name} onChange={(e) => setName(e.target.value)} required />
-        </label>
-        <label>
-          Email
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </label>
-        <label>
-          Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </label>
-        <button type="submit" disabled={status === 'loading'}>
-          {status === 'loading' ? 'Registering...' : 'Register'}
-        </button>
-        {error && <p className="error">{error}</p>}
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+    <div className="wrapper">
+      <div className="card">
+        <form onSubmit={handleSubmit}>
+          <h2 className="text-center mb-4">Register</h2>
+          <div className="mb-3">
+            <label className="form-label">Name</label>
+            <input className="form-control" value={name} onChange={(e) => setName(e.target.value)} required />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
+          <button type="submit" className="btn w-100" disabled={status === 'loading'}>
+            {status === 'loading' ? 'Registering...' : 'Register'}
+          </button>
+          {error && <div className="alert alert-danger mt-3 py-2">{error}</div>}
+          <p className="text-center mt-3 mb-0">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
