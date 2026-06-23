@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -72,6 +73,13 @@ function App() {
             <PrivateRoute>
               <Header />
               <Cart />
+              <Footer />
+            </PrivateRoute>
+          } />
+           <Route path='/profile' element={
+            <PrivateRoute>
+              <Header />
+              <Profile />
               <Footer />
             </PrivateRoute>
           } />

@@ -692,3 +692,65 @@ ul.CTAs a {
   color: grey;
 }
 
+/* Header User Dropdown */
+.header-user-section {
+  position: relative;
+  display: inline-block;
+}
+
+.user-dropdown-toggle {
+  color: white !important;
+  background: transparent !important;
+  border: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.user-dropdown-toggle:hover {
+  color: #febd69 !important;
+}
+
+.user-dropdown-toggle::after {
+  display: none !important;
+}
+
+.user-role-badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.header-user-section .dropdown-menu {
+  position: absolute;
+  right: 0;
+  left: auto !important;
+  transform: none !important;
+  margin-top: 8px;
+  min-width: 140px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.4rem 0;
+} 
+
+.header-user-section .dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  color: #333;
+}
+
+.header-user-section .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #232f3e;
+}
+

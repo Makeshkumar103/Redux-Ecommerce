@@ -1,14 +1,28 @@
+import { useState, useRef, useEffect } from "react";
 import Search from "./Search";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
 import { User } from "lucide-react";
 export default function Header() {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
     const cartItems = useSelector((state) => state.cart.items);
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    return  (
+
+    useEffect(() => {
+      const handleClickOutside = (e) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+          setDropdownOpen(false);
+        }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
     <nav className="navbar row">
       <div className="col-12 col-md-3">
         <div className="navbar-brand">
@@ -29,11 +43,33 @@ export default function Header() {
         </Link>
       </div>
 
-      <div className="col-12 col-md-2 mt-4 mt-md-0 text-center">
-        {user?.role === 'admin' && (
+      <div className="col-12 col-md-2 mt-4 mt-md-0 text-center header-user-section" ref={dropdownRef}>
+        <button
+          className="btn user-dropdown-toggle"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        >
           <User />
-        )}
-        <span id="login" className="ml-3" style={{cursor:'pointer'}} onClick={() => { dispatch(logout()); navigate('/login'); }}>Logout</span>
+          <span className="user-role-badge">{user?.role === 'admin' ? 'Admin' : 'User'}</span>
+        </button>
+        <div className={`dropdown-menu dropdown-menu-right${dropdownOpen ? ' show' : ''}`}>
+          <Link
+            to="/profile"
+            className="dropdown-item"
+            onClick={() => setDropdownOpen(false)}
+          >
+            Profile
+          </Link>
+          <button
+            className="dropdown-item"
+            onClick={() => {
+              setDropdownOpen(false);
+              dispatch(logout());
+              navigate('/login');
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </nav>
     )
