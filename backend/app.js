@@ -10,6 +10,7 @@ dotenv.config({path: path.join(__dirname, '.env')})
 const products = require('./routes/product');
 const orders = require('./routes/order');
 const auth = require('./routes/auth');
+const uploadRoutes = require('./routes/upload');
 
 connectDatabase();
 
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 app.use('/api/v1/', products);
 app.use('/api/v1/', orders);
 app.use('/api/v1/', auth);
+app.use('/api/v1/', uploadRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is listening to port 8000 in ${process.env.NODE_ENV}`)

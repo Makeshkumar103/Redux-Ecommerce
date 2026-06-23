@@ -18,6 +18,8 @@ import NotFound from './pages/NotFound';
 import UnauthPage from './pages/UnauthPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminNewProduct from './pages/AdminNewProduct';
+import AdminStock from './pages/AdminStock';
+import AdminExpenses from './pages/AdminExpenses';
 
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
@@ -75,32 +77,29 @@ function App() {
           } />
            <Route path='/admin/dashboard' element={
             <AdminRoute>
-              <Header />
+              {/* <Header /> */}
               <AdminDashboard />
               <Footer />
             </AdminRoute>
           } />
           <Route path='/admin/newproduct' element={
             <AdminRoute>
-              <Header />
               <AdminNewProduct />
               <Footer />
             </AdminRoute>
           } />
-          {/* <Route path='/admin/stock' element={
+          <Route path='/admin/stock' element={
             <AdminRoute>
-              <Header />
               <AdminStock />
               <Footer />
             </AdminRoute>
           } />
-          <Route path='/admin/expenses' element={
+          <Route path='/admin/orders' element={
             <AdminRoute>
-              <Header />
               <AdminExpenses />
               <Footer />
             </AdminRoute>
-          } /> */}
+          } />
           <Route path='*' element={<NotFound />} />
           <Route path='/unauthpage' element={<UnauthPage />} />
         </Routes>
