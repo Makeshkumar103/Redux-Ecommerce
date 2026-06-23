@@ -34,7 +34,7 @@ function Register() {
         <form onSubmit={handleSubmit}>
           <h2 className="text-center mb-4">Register</h2>
           <div className="mb-3">
-            <label className="form-label">Name</label>
+            <label className="form-label">Username</label>
             <input className="form-control" value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
           <div className="mb-3">

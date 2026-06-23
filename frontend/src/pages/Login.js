@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, clearError } from '../store/authSlice';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ function Login() {
 
   useEffect(() => {
     if (token && user) {
-      navigate(user.role === 'admin' ? '/admin/newproduct' : '/');
+      navigate(user.role === 'admin' ? '/admin/dashboard' : '/');
     }
   }, [token, user, navigate]);
 
@@ -24,7 +24,7 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
+    dispatch(loginUser({ name: username, password }));
   };
 
   return (
@@ -33,8 +33,8 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <h2 className="text-center mb-4">Login</h2>
           <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <label className="form-label">Username</label>
+            <input className="form-control" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </div>
           <div className="mb-3">
             <label className="form-label">Password</label>
@@ -46,6 +46,9 @@ function Login() {
           {error && <div className="alert alert-danger mt-3 py-2">{error}</div>}
           <p className="text-center mt-3 mb-0">
             Don&apos;t have an account? <Link to="/register">Register</Link>
+          </p>
+          <p className="text-center mt-2 mb-0">
+            <Link to="/forgot-password">Forgot Password?</Link>
           </p>
         </form>
       </div>

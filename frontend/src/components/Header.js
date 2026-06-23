@@ -2,6 +2,7 @@ import Search from "./Search";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+import { User } from "lucide-react";
 export default function Header() {
     const cartItems = useSelector((state) => state.cart.items);
     const user = useSelector((state) => state.auth.user);
@@ -30,7 +31,7 @@ export default function Header() {
 
       <div className="col-12 col-md-2 mt-4 mt-md-0 text-center">
         {user?.role === 'admin' && (
-          <Link to="/admin/newproduct" className="me-3" style={{color:'#febd69', fontWeight:'bold', textDecoration:'none'}}>+ New Product</Link>
+          <User />
         )}
         <span id="login" className="ml-3" style={{cursor:'pointer'}} onClick={() => { dispatch(logout()); navigate('/login'); }}>Logout</span>
       </div>
