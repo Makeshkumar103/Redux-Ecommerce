@@ -34,7 +34,7 @@ export default function Sidebar() {
     ];
 
     return (
-        <nav id="sidebar" className="col-12 col-md-2 p-0" style={{ minWidth: 'auto', maxWidth: 'none' }}>
+        <nav id="sidebar" className="col-12 col-md-2 p-0 d-flex flex-column" style={{ minWidth: 'auto', maxWidth: 'none' }}>
             <div className="navbar-brand m-4">
                 {/* <Link to="/"> */}
                     <img width="150px" src="/images/logo.png" alt="logo-image" />
@@ -50,7 +50,7 @@ export default function Sidebar() {
                         </li>
                     ))}
             </ul>
-            <div className="fixed-bottom bd-highlight" ref={dropdownRef}>
+            <div className="dropdown mt-auto p-3" ref={dropdownRef}>
                 <button
                     className="btn user-dropdown-toggle"
                     onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -58,7 +58,7 @@ export default function Sidebar() {
                     <User />
                     <span className="user-role-badge">{user?.role === 'admin' ? 'Admin' : 'User'}</span>
                 </button>
-                <div className={`dropdown-menu dropdown-menu-right${dropdownOpen ? ' show' : ''}`}>
+                <div className={`dropdown-menu dropdown-menu-end${dropdownOpen ? ' show' : ''}`}>
                     <Link
                         to="/profile"
                         className="dropdown-item"
@@ -78,7 +78,6 @@ export default function Sidebar() {
                     </button>
                 </div>
             </div>
-            
             </nav>
     )
 }

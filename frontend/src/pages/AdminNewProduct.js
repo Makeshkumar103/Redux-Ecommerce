@@ -1,9 +1,13 @@
 import { useState, useRef } from 'react';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { createProduct } from '../store/adminSlice';
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 
 export default function AdminNewProduct() {
+  const dispatch = useDispatch();
+  const { productCreating } = useSelector((state) => state.admin);
+
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -12,7 +16,6 @@ export default function AdminNewProduct() {
   const [stock, setStock] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const [loading, setLoading] = useState(false);
   const fileRef = useRef(null);
 
   const handleImageChange = (e) => {
@@ -29,23 +32,8 @@ export default function AdminNewProduct() {
       toast.error('Please select an image');
       return;
     }
-    setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-
-      const formData = new FormData();
-      formData.append('image', image);
-      const uploadRes = await axios.post(
-        `${process.env.REACT_APP_API_URL}/upload`,
-        formData,
-        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-      );
-
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/product/new`,
-        { name, price, description, category, seller, stock, imageUrl: uploadRes.data.url },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await dispatch(createProduct({ name, price, description, category, seller, stock, image })).unwrap();
       toast('Product created successfully!');
       setName('');
       setPrice('');
@@ -56,10 +44,8 @@ export default function AdminNewProduct() {
       setImage(null);
       setImagePreview('');
       if (fileRef.current) fileRef.current.value = '';
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create product');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      toast.error(err || 'Failed to create product');
     }
   };
 
@@ -103,8 +89,8 @@ export default function AdminNewProduct() {
                               <img src={imagePreview} alt="Preview" className="mt-2" style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }} />
                             )}
                           </div>
-                          <button type="submit" className="btn w-100" disabled={loading} style={{ backgroundColor: '#febd69' }}>
-                            {loading ? 'Uploading & Creating...' : 'Create Product'}
+                          <button type="submit" className="btn w-100" disabled={productCreating} style={{ backgroundColor: '#febd69' }}>
+                                                            {productCreating ? 'Uploading & Creating...' : 'Create Product'}
                           </button>
                         </form>
                       </div>

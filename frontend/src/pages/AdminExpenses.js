@@ -1,64 +1,41 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchExpenses, createExpense, deleteExpense } from '../store/adminSlice';
 import { toast } from 'react-toastify';
 import Sidebar from '../components/Sidebar';
 import { Trash2 } from 'lucide-react';
 
 export default function AdminExpenses() {
-  
+    const dispatch = useDispatch();
+    const { expenses, expensesLoading, expenseCreating, expenseDeleting } = useSelector((state) => state.admin);
 
-    const [expenses, setExpenses] = useState([]);
     const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
-    const [loading, setLoading] = useState(false);
 
-    const fetchExpenses = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/admin/expenses`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setExpenses(data.expenses || []);
-        } catch {
-            toast.error('Failed to fetch expenses');
-        }
-    };
-
-    useEffect(() => { fetchExpenses(); }, []);
+    useEffect(() => {
+        dispatch(fetchExpenses());
+    }, [dispatch]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            await axios.post(
-                `${process.env.REACT_APP_API_URL}/admin/expense/new`,
-                { title, amount, category },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await dispatch(createExpense({ title, amount, category })).unwrap();
             toast('Expense added successfully!');
             setTitle('');
             setAmount('');
             setCategory('');
-            fetchExpenses();
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to add expense');
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            toast.error(err || 'Failed to add expense');
         }
     };
 
     const handleDelete = async (id) => {
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`${process.env.REACT_APP_API_URL}/admin/expense/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await dispatch(deleteExpense(id)).unwrap();
             toast('Expense deleted');
-            fetchExpenses();
-        } catch {
-            toast.error('Failed to delete expense');
+        } catch (err) {
+            toast.error(err || 'Failed to delete expense');
         }
     };
 
@@ -89,8 +66,8 @@ export default function AdminExpenses() {
                                         <label className="form-label">Category</label>
                                         <input type="text" className="form-control" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. Utilities, Marketing" required />
                                     </div>
-                                    <button type="submit" className="btn w-100" disabled={loading} style={{ backgroundColor: '#febd69' }}>
-                                        {loading ? 'Adding...' : 'Add Expense'}
+                                    <button type="submit" className="btn w-100" disabled={expenseCreating} style={{ backgroundColor: '#febd69' }}>
+                                        {expenseCreating ? 'Adding...' : 'Add Expense'}
                                     </button>
                                 </form>
                             </div>

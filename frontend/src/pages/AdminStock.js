@@ -1,27 +1,21 @@
 import { useState, useEffect } from 'react';
-
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../store/productSlice';
+import { updateProductStock } from '../store/adminSlice';
 import { toast } from 'react-toastify';
 import Sidebar from '../components/Sidebar';
 import { Save } from 'lucide-react';
-export default function AdminStock() {
-   
 
-    const [products, setProducts] = useState([]);
+export default function AdminStock() {
+    const dispatch = useDispatch();
+    const { products, loading } = useSelector((state) => state.products);
+    const { stockUpdating } = useSelector((state) => state.admin);
+
     const [edits, setEdits] = useState({});
-    const [saving, setSaving] = useState(null);
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
-                setProducts(data.products || []);
-            } catch {
-                toast.error('Failed to fetch products');
-            }
-        };
-        fetchProducts();
-    }, []);
+        dispatch(fetchProducts('keyword='));
+    }, [dispatch]);
 
     const handleStockChange = (id, value) => {
         setEdits((prev) => ({ ...prev, [id]: value }));
@@ -30,27 +24,16 @@ export default function AdminStock() {
     const handleSave = async (id) => {
         const newStock = edits[id];
         if (newStock === undefined || newStock === '') return;
-        setSaving(id);
         try {
-            const token = localStorage.getItem('token');
-            await axios.put(
-                `${process.env.REACT_APP_API_URL}/admin/product/${id}`,
-                { stock: newStock },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await dispatch(updateProductStock({ id, stock: newStock })).unwrap();
             toast('Stock updated!');
             setEdits((prev) => {
                 const copy = { ...prev };
                 delete copy[id];
                 return copy;
             });
-            setProducts((prev) =>
-                prev.map((p) => (p._id === id ? { ...p, stock: newStock } : p))
-            );
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to update stock');
-        } finally {
-            setSaving(null);
+        } catch (err) {
+            toast.error(err || 'Failed to update stock');
         }
     };
 
@@ -105,11 +88,11 @@ export default function AdminStock() {
                                                             <button
                                                                 className="btn btn-sm"
                                                                 style={{ backgroundColor: '#febd69', color: '#232f3e' }}
-                                                                disabled={saving === p._id}
-                                                                onClick={() => handleSave(p._id)}
-                                                            >
-                                                                <Save size={16} className="me-1" />
-                                                                {saving === p._id ? 'Saving...' : 'Save'}
+                                                                disabled={stockUpdating === p._id}
+                                                                 onClick={() => handleSave(p._id)}
+                                                             >
+                                                                 <Save size={16} className="me-1" />
+                                                                 {stockUpdating === p._id ? 'Saving...' : 'Save'}
                                                             </button>
                                                         )}
                                                     </td>
